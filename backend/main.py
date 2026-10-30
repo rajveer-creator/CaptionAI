@@ -20,7 +20,10 @@ app = FastAPI(title="CaptionAI Backend")
 
 DB_FILE = os.path.join(os.path.dirname(__file__), "captions.db")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
-SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "")
+SUPABASE_PUBLISHABLE_KEY = (
+    os.getenv("SUPABASE_PUBLISHABLE_KEY", "")
+    or os.getenv("SUPABASE_ANON_KEY", "")
+)
 
 security = HTTPBearer()
 
