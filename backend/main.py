@@ -38,9 +38,16 @@ configured_origins = [
 ]
 allowed_origins = list(dict.fromkeys(DEFAULT_CORS_ORIGINS + configured_origins))
 
+# Support Vercel production and preview domains (*.vercel.app) by default or custom regex
+cors_origin_regex = os.getenv(
+    "CORS_ORIGIN_REGEX",
+    r"^https:\/\/.*\.vercel\.app$"
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

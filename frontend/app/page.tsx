@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import AuthStatus from "./components/AuthStatus";
 import { createClient } from "@/lib/supabase/client";
+import { authenticatedFetch } from "@/lib/api";
 import type { User, Session, AuthChangeEvent, AuthError } from "@supabase/supabase-js";
 
 type Platform = "Instagram" | "YouTube" | "Facebook" | "LinkedIn";
@@ -35,7 +36,6 @@ type HistoryResponse = {
   captions: CaptionResponse[];
 };
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 const PAGE_SIZE = 20;
 
 const SAMPLE_PROMPTS = [
@@ -44,31 +44,6 @@ const SAMPLE_PROMPTS = [
   "Monday morning coffee thoughts",
   "Behind the scenes of our creative studio",
 ];
-
-// Authenticated request helper
-async function authenticatedFetch(
-  path: string,
-  init: RequestInit = {}
-): Promise<Response> {
-  const supabase = createClient();
-
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
-  if (error || !session?.access_token) {
-    throw new Error("Please log in to use CaptionAI.");
-  }
-
-  const headers = new Headers(init.headers);
-  headers.set("Authorization", `Bearer ${session.access_token}`);
-
-  return fetch(`${API}${path}`, {
-    ...init,
-    headers,
-  });
-}
 
 export default function Home() {
   const [topic, setTopic] = useState("");
